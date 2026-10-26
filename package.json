@@ -1,0 +1,21 @@
+{
+  "name": "cat-door-tower-climb",
+  "version": "1.0.0",
+  "description": "Minimalist physics-based vertical mobile web arcade by Tiltopia",
+  "main": "index.html",
+  "scripts": {
+    "build": "node build.js",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "game",
+    "physics",
+    "html5-canvas",
+    "web-audio",
+    "tiltopia",
+    "ragdoll",
+    "arcade"
+  ],
+  "author": "Tiltopia Media & Game Studio",
+  "license": "MIT"
+}

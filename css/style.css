@@ -1,0 +1,778 @@
+/* ============================================================
+   TİLTOPİA — "CAT DOOR: TOWER CLIMB" v9.2
+   ELITE HIGH-END MOBILE ARCADE DESIGN SYSTEM
+   Design Philosophy: Minimalist Luxury, Frosted Obsidian Glass,
+   Restrained Cyber Accents, Zero Clutter, Tactile Micro-Interactions.
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  /* Elite Color Palette */
+  --bg-deep: #06040b;
+  --bg-surface: rgba(15, 11, 26, 0.85);
+  --bg-surface-glass: rgba(18, 13, 30, 0.72);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-sheen: rgba(255, 255, 255, 0.18);
+  
+  /* Brand Accent Highlights */
+  --accent-mint: #00f59b;
+  --accent-mint-glow: rgba(0, 245, 155, 0.45);
+  --accent-gold: #ffd166;
+  --accent-gold-glow: rgba(255, 209, 102, 0.45);
+  --accent-rose: #ff2a6d;
+  --accent-rose-glow: rgba(255, 42, 109, 0.40);
+  --accent-cyan: #38bdf8;
+
+  /* Typography */
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Courier New", monospace, ui-monospace;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: #f1f5f9;
+  font-family: var(--font-display);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-image: 
+    radial-gradient(circle at 50% 15%, rgba(42, 23, 74, 0.45) 0%, transparent 60%),
+    radial-gradient(circle at 50% 85%, rgba(13, 35, 40, 0.35) 0%, transparent 60%);
+}
+
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 450px;
+  max-height: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #090612;
+  box-shadow: 
+    0 0 60px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(0, 245, 155, 0.08),
+    inset 0 0 1px 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  border-radius: 0;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@media (min-width: 480px) and (min-height: 820px) {
+  #game-container {
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ============================================================
+   1. ELITE UNIFIED TOP HUD (FROSTED LUXURY CAPSULE)
+   ============================================================ */
+#unified-hud {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: max(14px, env(safe-area-inset-left));
+  right: max(14px, env(safe-area-inset-right));
+  height: 54px;
+  background: linear-gradient(135deg, rgba(22, 16, 38, 0.82) 0%, rgba(12, 9, 22, 0.92) 100%);
+  border: 1px solid var(--border-sheen);
+  border-radius: 18px;
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: translateZ(0);
+  box-shadow: 
+    0 8px 32px -4px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+  z-index: 15;
+}
+
+.hud-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.hud-left {
+  align-items: flex-start;
+  min-width: 68px;
+}
+
+.hud-center {
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  padding: 0 12px;
+}
+
+/* Subtle Hairline Dividers */
+.hud-center::before,
+.hud-center::after {
+  content: "";
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+}
+
+.hud-center::before { left: 0; }
+.hud-center::after { right: 0; }
+
+.hud-right {
+  align-items: flex-end;
+  min-width: 78px;
+}
+
+.hud-tag {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.hud-val-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  line-height: 1;
+}
+
+.hud-val {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--accent-mint);
+  text-shadow: 0 0 12px var(--accent-mint-glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-total {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--font-mono);
+}
+
+.hud-title {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.hud-sub-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+  letter-spacing: 0.4px;
+}
+
+.stat-item b {
+  color: var(--accent-gold);
+  font-weight: 900;
+  font-family: var(--font-mono);
+}
+
+.stat-sep {
+  opacity: 0.25;
+}
+
+.hud-val-amber {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--accent-gold);
+  text-shadow: 0 0 10px var(--accent-gold-glow);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   2. ELITE VERTICAL JEWEL LADDER (STAGE MINIMAP)
+   ============================================================ */
+#tower-ladder {
+  position: absolute;
+  right: 14px;
+  top: 86px;
+  bottom: 110px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ladder-track {
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 50%;
+  width: 2px;
+  background: linear-gradient(180deg, 
+    rgba(255, 209, 102, 0.6) 0%,
+    rgba(0, 245, 155, 0.3) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  transform: translateX(-50%);
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.ladder-node {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(14, 10, 24, 0.88);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.node-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.node-icon {
+  font-size: 12px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px var(--accent-gold-glow));
+}
+
+/* Active Stage Node: Breathing Emerald Halo */
+.ladder-node.active {
+  transform: scale(1.22);
+  border-color: var(--accent-mint);
+  background: rgba(10, 24, 20, 0.95);
+  box-shadow: 
+    0 0 18px var(--accent-mint-glow),
+    inset 0 0 8px rgba(0, 245, 155, 0.25);
+  animation: activeJewelPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes activeJewelPulse {
+  0%, 100% {
+    box-shadow: 0 0 16px var(--accent-mint-glow), inset 0 0 6px rgba(0, 245, 155, 0.2);
+    transform: scale(1.20);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 245, 155, 0.7), inset 0 0 10px rgba(0, 245, 155, 0.4);
+    transform: scale(1.26);
+  }
+}
+
+.ladder-node.active .node-num {
+  color: var(--accent-mint);
+  font-weight: 900;
+}
+
+/* Cleared Stages: Polished Champagne Gold Ring */
+.ladder-node.cleared {
+  border-color: var(--accent-gold);
+  background: rgba(28, 22, 14, 0.92);
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.25);
+}
+
+.ladder-node.cleared .node-num {
+  color: var(--accent-gold);
+  font-weight: 900;
+}
+
+/* ============================================================
+   3. LUXURY MODAL (VICTORY & CHALLENGE CARD)
+   ============================================================ */
+#retry-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 3, 10, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 30;
+  padding: 24px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+#retry-container.visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 330px;
+  background: linear-gradient(145deg, rgba(20, 15, 32, 0.96) 0%, rgba(11, 8, 20, 0.98) 100%);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  box-shadow: 
+    0 16px 48px -8px rgba(0, 0, 0, 0.85),
+    0 0 30px rgba(255, 209, 102, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 22px;
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle Specular Sheen on Top of Modal Card */
+.modal-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+}
+
+#retry-badge-row {
+  display: flex;
+  gap: 8px;
+}
+
+.badge-pill {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.badge-pill.highlight {
+  background: rgba(255, 209, 102, 0.12);
+  color: var(--accent-gold);
+  border-color: rgba(255, 209, 102, 0.4);
+}
+
+#retry-title {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  background: linear-gradient(180deg, #ffffff 40%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.25;
+}
+
+#retry-subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.45;
+  max-width: 260px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.action-btn {
+  border: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 14px;
+  padding: 14px 20px;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+/* Primary CTA: Electric Mint Glow */
+.primary-btn {
+  background: linear-gradient(135deg, #00f59b 0%, #00d084 100%);
+  color: #060b08;
+  font-size: 13.5px;
+  box-shadow: 
+    0 6px 20px rgba(0, 245, 155, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.primary-btn:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 8px 24px rgba(0, 245, 155, 0.6);
+}
+
+/* Secondary CTA: Frosted Champagne Glass */
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--accent-gold);
+  border: 1.5px solid rgba(255, 209, 102, 0.45);
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 209, 102, 0.10);
+  border-color: rgba(255, 209, 102, 0.7);
+}
+
+#quick-hint {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   TOP CONTROLS BAR (DEVLOG, VIRAL CHALLENGE & AUDIO MUTE)
+   ============================================================ */
+#top-controls-bar {
+  position: absolute;
+  top: calc(max(14px, env(safe-area-inset-top)) + 62px);
+  left: max(14px, env(safe-area-inset-left));
+  right: calc(max(14px, env(safe-area-inset-right)) + 42px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 12;
+  pointer-events: auto;
+}
+
+.hud-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: translateZ(0);
+  font-family: var(--font-display);
+  border: 1px solid var(--border-sheen);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  background: rgba(18, 13, 30, 0.88);
+  color: #f1f5f9;
+  outline: none;
+}
+
+.hud-pill:active {
+  transform: scale(0.94);
+}
+
+.hud-pill-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.hud-pill-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+/* Devlog Pill: Rose Accent */
+.devlog-pill {
+  background: linear-gradient(135deg, rgba(28, 16, 38, 0.90) 0%, rgba(16, 10, 24, 0.95) 100%);
+  border-color: rgba(255, 42, 109, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 42, 109, 0.22);
+}
+
+.devlog-pill:hover {
+  transform: scale(1.04);
+  border-color: rgba(255, 42, 109, 0.85);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 16px rgba(255, 42, 109, 0.5);
+}
+
+.devlog-pill .hud-pill-label {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* Challenge Trigger Pill: Radiant Gold */
+.challenge-trigger-pill {
+  background: linear-gradient(135deg, rgba(32, 24, 12, 0.92) 0%, rgba(20, 15, 8, 0.96) 100%);
+  border-color: rgba(255, 209, 102, 0.55);
+  color: var(--accent-gold);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 209, 102, 0.25);
+}
+
+.challenge-trigger-pill:hover {
+  transform: scale(1.04);
+  border-color: rgba(255, 209, 102, 0.9);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 18px rgba(255, 209, 102, 0.5);
+}
+
+.challenge-trigger-pill.copied {
+  background: linear-gradient(135deg, #00f59b 0%, #00d084 100%);
+  color: #060b08;
+  border-color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 245, 155, 0.8);
+  transform: scale(1.05);
+}
+
+/* Sound Toggle Pill */
+.sound-toggle-pill {
+  background: rgba(18, 13, 30, 0.88);
+  border-color: rgba(255, 255, 255, 0.18);
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+.sound-toggle-pill:hover {
+  border-color: var(--accent-mint);
+  box-shadow: 0 0 12px var(--accent-mint-glow);
+}
+
+.sound-toggle-pill.muted {
+  border-color: rgba(255, 42, 109, 0.55);
+  opacity: 0.65;
+}
+
+/* Modal Devlog Action CTA */
+.devlog-btn {
+  background: linear-gradient(135deg, rgba(255, 42, 109, 0.18) 0%, rgba(255, 0, 85, 0.30) 100%);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 42, 109, 0.55);
+  font-size: 11.5px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 18px rgba(255, 42, 109, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.devlog-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 42, 109, 0.35) 0%, rgba(255, 0, 85, 0.50) 100%);
+  border-color: #ff2a6d;
+  box-shadow: 0 6px 22px rgba(255, 42, 109, 0.50);
+}
+
+/* ============================================================
+   VIRAL URL CHALLENGE BANNER (P1)
+   ============================================================ */
+.challenge-pill {
+  position: absolute;
+  top: 112px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(30, 20, 52, 0.92) 0%, rgba(18, 12, 34, 0.96) 100%);
+  border: 1px solid rgba(255, 209, 102, 0.55);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.65),
+    0 0 16px rgba(255, 209, 102, 0.25);
+  z-index: 14;
+  animation: challengeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+.challenge-pill.beaten {
+  border-color: rgba(0, 245, 155, 0.85);
+  background: linear-gradient(135deg, rgba(10, 40, 28, 0.95) 0%, rgba(8, 26, 18, 0.98) 100%);
+  box-shadow: 
+    0 8px 28px rgba(0, 0, 0, 0.75),
+    0 0 24px rgba(0, 245, 155, 0.45);
+  animation: challengePulse 1.2s infinite alternate;
+}
+
+@keyframes challengeSlideIn {
+  from { opacity: 0; transform: translateY(-12px) translateZ(0); }
+  to { opacity: 1; transform: translateY(0) translateZ(0); }
+}
+
+@keyframes challengePulse {
+  from { transform: scale(1) translateZ(0); box-shadow: 0 0 14px rgba(0, 245, 155, 0.3); }
+  to { transform: scale(1.02) translateZ(0); box-shadow: 0 0 26px rgba(0, 245, 155, 0.6); }
+}
+
+.challenge-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px rgba(255, 209, 102, 0.6));
+}
+
+.challenge-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.challenge-headline {
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.challenge-headline b {
+  color: var(--accent-gold);
+}
+
+.challenge-desc {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.2px;
+}
+
+.challenge-desc b {
+  color: #fff;
+}
+
+.challenge-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.challenge-dismiss:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Toast Notification (P1) */
+.toast-capsule {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  -webkit-transform: translateX(-50%) translateZ(0);
+  background: rgba(18, 14, 30, 0.94);
+  border: 1px solid var(--accent-mint);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 245, 155, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  pointer-events: none;
+  animation: toastFade 0.3s ease forwards;
+  white-space: nowrap;
+}
+
+@keyframes toastFade {
+  from { opacity: 0; transform: translate(-50%, 12px) translateZ(0); }
+  to { opacity: 1; transform: translate(-50%, 0) translateZ(0); }
+}
+
+/* Near-Miss Pulse (P2) */
+@keyframes nearMissPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
+  35% { transform: scale(1.45); filter: drop-shadow(0 0 14px #ffd700); color: #ffff00; }
+  100% { transform: scale(1); filter: drop-shadow(0 0 4px #ffd700); }
+}
+
+.hud-val-amber.pulse {
+  animation: nearMissPulse 0.45s ease-out;
+}
+
+/* GPU Hardware Acceleration for Tower and Modals (P2) */
+canvas, #tower-ladder, #retry-container, .modal-card {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

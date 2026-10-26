@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#06040b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <title>Cat Door: Tower Climb — Tiltopia</title>
+  <meta name="description" content="A minimalist physics ragdoll cat climber by Tiltopia. Time your jumps through 5 high-security doors to reach the Penthouse milk bowl!">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cat Door: Tower Climb — Tiltopia">
+  <meta property="og:description" content="Can you pass the 5 security doors and conquer the tower? Zero-latency minimalist mobile physics arcade.">
+  <meta property="og:image" content="https://tiltopia.games/assets/cat_door_cover.jpg">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cat Door: Tower Climb — Tiltopia">
+  <meta name="twitter:description" content="Can you pass the 5 security doors and conquer the tower? Zero-latency minimalist mobile physics arcade.">
+
+  <!-- Inline SVG Favicon (Zero-Asset Cute Neon Cat) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2306040b' stroke='%2300f59b' stroke-width='2'/%3E%3Cpath d='M8 13 L12 6 L16 11 L20 6 L24 13 C25 19 21 26 16 26 C11 26 7 19 8 13 Z' fill='%2300f59b'/%3E%3Ccircle cx='13' cy='16' r='2' fill='%2306040b'/%3E%3Ccircle cx='19' cy='16' r='2' fill='%2306040b'/%3E%3Ccircle cx='16' cy='20' r='1.2' fill='%23ff2a6d'/%3E%3C/svg%3E">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="450" height="800"></canvas>
+    
+    <!-- Unified Top HUD -->
+    <header id="unified-hud">
+      <!-- Left: Active Stage / 5 -->
+      <div class="hud-col hud-left">
+        <span class="hud-tag">STAGE</span>
+        <div class="hud-val-wrap">
+          <span id="score-passes" class="hud-val">1</span>
+          <span class="hud-total">/ 5</span>
+        </div>
+      </div>
+
+      <!-- Center: Stage Name, Best & Attempt Counter -->
+      <div class="hud-col hud-center">
+        <div id="floor-display" class="hud-title">BASEMENT ENTRY</div>
+        <div class="hud-sub-stats">
+          <span class="stat-item">BEST: <b id="score-best">1</b></span>
+          <span class="stat-sep">•</span>
+          <span class="stat-item">TRY: <b id="rage-counter">#1</b></span>
+        </div>
+      </div>
+
+      <!-- Right: Near-Miss Counter -->
+      <div class="hud-col hud-right">
+        <span class="hud-tag">⚡ NEAR-MISS</span>
+        <span id="score-nearmiss" class="hud-val-amber">0</span>
+      </div>
+    </header>
+
+    <!-- Viral URL Challenge Banner (P1) -->
+    <div id="challenge-banner" class="challenge-pill" style="display: none;">
+      <span class="challenge-icon">⚔️</span>
+      <div class="challenge-info">
+        <span class="challenge-headline"><b id="challenger-name">Baran</b> challenged you!</span>
+        <span class="challenge-desc">Beat Stage <b id="challenge-floor">4</b> in under <b id="challenge-tries">28</b> tries!</span>
+      </div>
+      <button id="challenge-dismiss-btn" class="challenge-dismiss" title="Dismiss">✕</button>
+    </div>
+
+    <!-- Top Action Controls (Viral Challenge, Devlog & Audio Mute) -->
+    <div id="top-controls-bar">
+      <!-- YouTube Devlog Bridge (Content-Product Loop) -->
+      <a id="devlog-banner" class="hud-pill devlog-pill" href="https://youtube.com/@Tiltopia" target="_blank" rel="noopener noreferrer" title="Watch 48h Devlog on YouTube">
+        <span class="hud-pill-icon">🎬</span>
+        <span class="hud-pill-label">DEVLOG</span>
+      </a>
+
+      <!-- Quick Viral Challenge Link Generator -->
+      <button id="hud-challenge-btn" class="hud-pill challenge-trigger-pill" title="Challenge a Friend to beat your score">
+        <span class="hud-pill-icon">⚔️</span>
+        <span class="hud-pill-label" id="hud-challenge-label">CHALLENGE</span>
+      </button>
+
+      <!-- Instant Mute / Unmute Audio Toggle -->
+      <button id="hud-sound-btn" class="hud-pill sound-toggle-pill" aria-label="Toggle Sound" title="Toggle Sound">
+        <span id="hud-sound-icon">🔊</span>
+      </button>
+    </div>
+
+    <!-- In-Game Toast Notification (P1) -->
+    <div id="game-toast" class="toast-capsule" style="display: none;"></div>
+
+    <!-- Side Tower Ladder (Minimap) -->
+    <nav id="tower-ladder" aria-label="Stage Progress">
+      <div class="ladder-track"></div>
+      <div class="ladder-node" data-floor="5" title="Stage 5: Royal Roof">
+        <span class="node-icon">👑</span>
+      </div>
+      <div class="ladder-node" data-floor="4" title="Stage 4: Windy Balcony">
+        <span class="node-num">4</span>
+      </div>
+      <div class="ladder-node" data-floor="3" title="Stage 3: Guillotine Hall">
+        <span class="node-num">3</span>
+      </div>
+      <div class="ladder-node" data-floor="2" title="Stage 2: Kitchen Vent">
+        <span class="node-num">2</span>
+      </div>
+      <div class="ladder-node active" data-floor="1" title="Stage 1: Basement Entry">
+        <span class="node-num">1</span>
+      </div>
+    </nav>
+
+    <!-- Clean Victory / Challenge Modal -->
+    <div id="retry-container">
+      <div class="modal-card">
+        <div id="retry-badge-row">
+          <span id="retry-floor-badge" class="badge-pill">STAGE 01</span>
+        </div>
+        <h2 id="retry-title">ROYAL CHAMPION! 👑</h2>
+        <p id="retry-subtitle">You conquered the tower! The Royal Salmon is yours!</p>
+
+        <div class="modal-actions">
+          <button id="retry-btn" class="action-btn primary-btn">PLAY AGAIN ⚡</button>
+          <button id="share-btn" class="action-btn secondary-btn">SHARE 🏆</button>
+          <a id="modal-devlog-btn" class="action-btn devlog-btn" href="https://youtube.com/@Tiltopia" target="_blank" rel="noopener noreferrer">🎬 WATCH 48H DEVLOG ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Game Architecture -->
+  <script src="src/config.js"></script>
+  <script src="src/audio_data.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/haptics.js"></script>
+  <script src="src/particles.js"></script>
+  <script src="src/physics.js"></script>
+  <script src="src/cat.js"></script>
+  <script src="src/door.js"></script>
+  <script src="src/input.js"></script>
+  <script src="src/game.js"></script>
+</body>
+</html>
